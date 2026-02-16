@@ -1,0 +1,1448 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; frame-ancestors 'none'; base-uri 'none'; form-action 'none';"
+    />
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Torneo di Biliardino 2026</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      :root {
+        --bg: #0c0f1a;
+        --surface: #151929;
+        --surface-2: #1c2137;
+        --border: #2a2f48;
+        --accent: #6c5ce7;
+        --accent-2: #a29bfe;
+        --green: #00cec9;
+        --gold: #fdcb6e;
+        --silver: #b2bec3;
+        --bronze: #e17055;
+        --text: #dfe6e9;
+        --text-dim: #636e84;
+        --danger: #d63031;
+        --radius: 10px;
+      }
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+        min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+      }
+      .container {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 1.25rem;
+      }
+      header {
+        text-align: center;
+        padding: 2.5rem 1rem 1.5rem;
+        background: linear-gradient(170deg, #1a1040 0%, var(--bg) 100%);
+        border-bottom: 1px solid var(--border);
+      }
+      header h1 {
+        font-size: clamp(1.5rem, 4vw, 2.2rem);
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, var(--accent-2), var(--green));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      header p {
+        color: var(--text-dim);
+        margin-top: 0.3rem;
+        font-size: 0.9rem;
+      }
+
+      /* Tabs */
+      .tabs {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 1.25rem 0;
+        flex-wrap: wrap;
+      }
+      .tab-btn {
+        background: var(--surface);
+        color: var(--text-dim);
+        border: 1px solid var(--border);
+        padding: 0.45rem 1.1rem;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.2s;
+      }
+      .tab-btn:hover {
+        border-color: var(--accent);
+        color: var(--text);
+      }
+      .tab-btn[aria-selected="true"] {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .tab-panel {
+        display: none;
+        padding-bottom: 3rem;
+      }
+      .tab-panel.active {
+        display: block;
+        animation: fadeIn 0.25s ease;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      /* Cards */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.4rem;
+        margin-bottom: 1.2rem;
+      }
+      .card h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: var(--accent-2);
+      }
+
+      /* Stat grid */
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.85rem;
+        margin-bottom: 1.4rem;
+      }
+      .stat-box {
+        background: var(--surface-2);
+        border-radius: var(--radius);
+        padding: 1rem;
+        text-align: center;
+      }
+      .stat-box .val {
+        font-size: 1.6rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, var(--accent-2), var(--green));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .stat-box .lbl {
+        font-size: 0.75rem;
+        color: var(--text-dim);
+        margin-top: 0.15rem;
+      }
+
+      /* Tables */
+      .table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+      }
+      th {
+        text-align: left;
+        padding: 0.6rem 0.7rem;
+        color: var(--text-dim);
+        font-weight: 600;
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      td {
+        padding: 0.6rem 0.7rem;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+      tr:last-child td {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: var(--surface-2);
+      }
+      .rank-1 {
+        color: var(--gold);
+        font-weight: 700;
+      }
+      .rank-2 {
+        color: var(--silver);
+        font-weight: 700;
+      }
+      .rank-3 {
+        color: var(--bronze);
+        font-weight: 700;
+      }
+
+      /* Badges */
+      .badge {
+        display: inline-block;
+        padding: 0.12rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        font-weight: 700;
+      }
+      .badge-w {
+        background: #00b89433;
+        color: #00cec9;
+      }
+      .badge-l {
+        background: #d6336c22;
+        color: #e17055;
+      }
+      .badge-d {
+        background: #636e8422;
+        color: #b2bec3;
+      }
+
+      /* Match cards */
+      .match {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.75rem 0.9rem;
+        background: var(--surface-2);
+        border-radius: var(--radius);
+        margin-bottom: 0.5rem;
+      }
+      .match .team {
+        font-weight: 600;
+        font-size: 0.88rem;
+      }
+      .match .team.winner {
+        color: var(--green);
+      }
+      .match .team:last-child {
+        text-align: right;
+      }
+      .match .score {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: var(--accent-2);
+        min-width: 55px;
+        text-align: center;
+      }
+      .round-label {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--text-dim);
+        margin: 1.1rem 0 0.4rem;
+        font-weight: 600;
+      }
+
+      /* Bar chart */
+      .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 0.4rem;
+        font-size: 0.8rem;
+      }
+      .bar-row .name {
+        width: 90px;
+        text-align: right;
+        flex-shrink: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .bar-track {
+        flex: 1;
+        height: 20px;
+        background: var(--surface-2);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 4px;
+        background: linear-gradient(90deg, var(--accent), var(--green));
+        display: flex;
+        align-items: center;
+        padding-left: 0.5rem;
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #fff;
+        min-width: fit-content;
+      }
+
+      /* ── CRUD Forms ─────────────────────────────────────── */
+      .form-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        margin-bottom: 0.75rem;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+      .field label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-dim);
+        font-weight: 600;
+      }
+      .field input,
+      .field select {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 0.45rem 0.65rem;
+        color: var(--text);
+        font-size: 0.85rem;
+        font-family: inherit;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .field input:focus,
+      .field select:focus {
+        border-color: var(--accent);
+      }
+      .field input::placeholder {
+        color: var(--text-dim);
+      }
+      .field select option {
+        background: var(--surface);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.45rem 0.9rem;
+        border-radius: 6px;
+        border: none;
+        font-size: 0.82rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+        font-family: inherit;
+      }
+      .btn-primary {
+        background: var(--accent);
+        color: #fff;
+      }
+      .btn-primary:hover {
+        background: #7c6df7;
+      }
+      .btn-danger {
+        background: transparent;
+        color: var(--danger);
+        border: 1px solid var(--danger);
+        padding: 0.2rem 0.5rem;
+        font-size: 0.72rem;
+        border-radius: 4px;
+      }
+      .btn-danger:hover {
+        background: var(--danger);
+        color: #fff;
+      }
+      .btn-edit {
+        background: transparent;
+        color: var(--accent-2);
+        border: 1px solid var(--accent-2);
+        padding: 0.2rem 0.5rem;
+        font-size: 0.72rem;
+        border-radius: 4px;
+      }
+      .btn-edit:hover {
+        background: var(--accent-2);
+        color: var(--bg);
+      }
+      .btn-cancel {
+        background: transparent;
+        color: var(--text-dim);
+        border: 1px solid var(--border);
+      }
+      .btn-cancel:hover {
+        border-color: var(--text-dim);
+        color: var(--text);
+      }
+
+      .actions-cell {
+        display: flex;
+        gap: 0.3rem;
+      }
+      .error-msg {
+        color: var(--danger);
+        font-size: 0.78rem;
+        margin-bottom: 0.5rem;
+        min-height: 1.2em;
+      }
+      .empty-msg {
+        color: var(--text-dim);
+        font-size: 0.85rem;
+        font-style: italic;
+        padding: 1rem 0;
+      }
+
+      footer {
+        text-align: center;
+        padding: 2rem 1rem;
+        color: var(--text-dim);
+        font-size: 0.75rem;
+        border-top: 1px solid var(--border);
+      }
+
+      @media (max-width: 600px) {
+        .match {
+          grid-template-columns: 1fr;
+          text-align: center;
+          gap: 0.2rem;
+        }
+        .match .team,
+        .match .team:last-child {
+          text-align: center;
+        }
+        .form-row {
+          flex-direction: column;
+        }
+        .field {
+          width: 100%;
+        }
+        .field input,
+        .field select {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Torneo di Biliardino 2026</h1>
+      <p>CRAL &mdash; Seconda iterazione</p>
+    </header>
+
+    <div class="container">
+      <nav class="tabs" role="tablist" aria-label="Tournament sections">
+        <button
+          class="tab-btn"
+          role="tab"
+          aria-selected="true"
+          aria-controls="panel-overview"
+          id="tab-overview"
+        >
+          Overview
+        </button>
+        <button
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-standings"
+          id="tab-standings"
+        >
+          Standings
+        </button>
+        <button
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-matches"
+          id="tab-matches"
+        >
+          Matches
+        </button>
+        <button
+          class="tab-btn"
+          role="tab"
+          aria-selected="false"
+          aria-controls="panel-players"
+          id="tab-players"
+        >
+          Players
+        </button>
+      </nav>
+
+      <section
+        class="tab-panel active"
+        id="panel-overview"
+        role="tabpanel"
+        aria-labelledby="tab-overview"
+      >
+        <div class="stat-grid" id="summary-stats"></div>
+        <div class="card">
+          <h2>Top Scorers</h2>
+          <div id="top-scorers-chart"></div>
+        </div>
+        <div class="card">
+          <h2>Recent Results</h2>
+          <div id="recent-results"></div>
+        </div>
+      </section>
+
+      <section
+        class="tab-panel"
+        id="panel-standings"
+        role="tabpanel"
+        aria-labelledby="tab-standings"
+      >
+        <div class="card">
+          <h2>League Table</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Player</th>
+                  <th>P</th>
+                  <th>W</th>
+                  <th>D</th>
+                  <th>L</th>
+                  <th>GF</th>
+                  <th>GA</th>
+                  <th>GD</th>
+                  <th>Pts</th>
+                </tr>
+              </thead>
+              <tbody id="standings-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section
+        class="tab-panel"
+        id="panel-matches"
+        role="tabpanel"
+        aria-labelledby="tab-matches"
+      >
+        <div class="card">
+          <h2>Add Match</h2>
+          <div class="error-msg" id="match-error"></div>
+          <div class="form-row">
+            <div class="field">
+              <label for="match-home">Home</label
+              ><select id="match-home"></select>
+            </div>
+            <div class="field">
+              <label for="match-home-score">Score</label
+              ><input
+                id="match-home-score"
+                type="number"
+                min="0"
+                max="99"
+                placeholder="0"
+                style="width: 60px"
+              />
+            </div>
+            <div class="field">
+              <label>&nbsp;</label
+              ><span
+                style="
+                  color: var(--text-dim);
+                  font-size: 0.9rem;
+                  padding: 0.45rem 0;
+                "
+                >vs</span
+              >
+            </div>
+            <div class="field">
+              <label for="match-away-score">Score</label
+              ><input
+                id="match-away-score"
+                type="number"
+                min="0"
+                max="99"
+                placeholder="0"
+                style="width: 60px"
+              />
+            </div>
+            <div class="field">
+              <label for="match-away">Away</label
+              ><select id="match-away"></select>
+            </div>
+            <div class="field">
+              <label for="match-round">Round</label
+              ><input
+                id="match-round"
+                type="number"
+                min="1"
+                max="999"
+                placeholder="#"
+                style="width: 60px"
+              />
+            </div>
+            <div class="field">
+              <label>&nbsp;</label
+              ><button class="btn btn-primary" id="btn-add-match">
+                Add Match
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>All Matches</h2>
+          <div id="all-matches"></div>
+        </div>
+      </section>
+
+      <section
+        class="tab-panel"
+        id="panel-players"
+        role="tabpanel"
+        aria-labelledby="tab-players"
+      >
+        <div class="card">
+          <h2>Add Player</h2>
+          <div class="error-msg" id="player-error"></div>
+          <div class="form-row">
+            <div class="field">
+              <label for="player-name">Name</label
+              ><input
+                id="player-name"
+                type="text"
+                placeholder="Player name"
+                maxlength="30"
+              />
+            </div>
+            <div class="field">
+              <label>&nbsp;</label
+              ><button class="btn btn-primary" id="btn-add-player">
+                Add Player
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Roster</h2>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Player</th>
+                  <th>Matches</th>
+                  <th>Goals</th>
+                  <th>Win %</th>
+                  <th>Form</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="player-stats-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <p>
+        Torneo di Biliardino 2026 &mdash; CRAL &middot; Leonardo &middot;
+        Chieti, via Enrico Mattei 11 66100
+      </p>
+    </footer>
+
+    <script>
+      "use strict";
+
+      /* ═══════════════════════════════════════════════════════
+       SAM PATTERN — State · Action · Model
+       ═══════════════════════════════════════════════════════
+
+       Flow:  View → Action(event) → proposal → Model.present(proposal)
+                                                       ↓
+                                              Model mutates dataset
+                                                       ↓
+                                              State.render(model)
+                                                       ↓
+                                              NAP (next-action predicate)
+                                                       ↓
+                                              View updated
+    */
+
+      /* ── Helpers ───────────────────────────────────────── */
+      var sanitize = (function () {
+        /* Whitelist: letters, digits, spaces, hyphens, dots, underscores */
+        var RE = /[^a-zA-Z0-9À-ÿ \-._]/g;
+        return function (s) {
+          return String(s).trim().replace(RE, "").substring(0, 30);
+        };
+      })();
+
+      function clampInt(v, lo, hi) {
+        var n = parseInt(v, 10);
+        return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : null;
+      }
+
+      var idCounter = 0;
+      function uid() {
+        return "m" + ++idCounter + "_" + Date.now();
+      }
+
+      function el(tag, attrs, children) {
+        var node = document.createElement(tag);
+        if (attrs) {
+          var keys = Object.keys(attrs);
+          for (var i = 0; i < keys.length; i++) {
+            var k = keys[i];
+            if (k === "textContent" || k === "className") node[k] = attrs[k];
+            else node.setAttribute(k, attrs[k]);
+          }
+        }
+        if (children) {
+          for (var j = 0; j < children.length; j++) {
+            if (typeof children[j] === "string")
+              node.appendChild(document.createTextNode(children[j]));
+            else if (children[j]) node.appendChild(children[j]);
+          }
+        }
+        return node;
+      }
+
+      /* ═══════════════════════════════════════════════════════
+       MODEL — single mutable dataset, guarded by present()
+       ═══════════════════════════════════════════════════════ */
+      var Model = (function () {
+        /* Private state — the only mutable data in the system */
+        var dataset = {
+          players: [
+            "Alice",
+            "Bob",
+            "Carlos",
+            "Diana",
+            "Ethan",
+            "Fiona",
+            "Gus",
+            "Hana",
+          ],
+          matches: [
+            { id: "s1", round: 1, home: "Alice", away: "Bob", hs: 10, as: 7 },
+            { id: "s2", round: 1, home: "Carlos", away: "Diana", hs: 8, as: 8 },
+            { id: "s3", round: 1, home: "Ethan", away: "Fiona", hs: 10, as: 5 },
+            { id: "s4", round: 1, home: "Gus", away: "Hana", hs: 6, as: 10 },
+            {
+              id: "s5",
+              round: 2,
+              home: "Alice",
+              away: "Carlos",
+              hs: 10,
+              as: 6,
+            },
+            { id: "s6", round: 2, home: "Bob", away: "Ethan", hs: 9, as: 10 },
+            { id: "s7", round: 2, home: "Diana", away: "Gus", hs: 10, as: 4 },
+            { id: "s8", round: 2, home: "Fiona", away: "Hana", hs: 7, as: 10 },
+            { id: "s9", round: 3, home: "Alice", away: "Ethan", hs: 8, as: 8 },
+            { id: "s10", round: 3, home: "Bob", away: "Diana", hs: 10, as: 9 },
+            {
+              id: "s11",
+              round: 3,
+              home: "Carlos",
+              away: "Hana",
+              hs: 6,
+              as: 10,
+            },
+            { id: "s12", round: 3, home: "Fiona", away: "Gus", hs: 10, as: 3 },
+          ],
+          /* Transient UI state */
+          editingMatch: null,
+          errors: { player: "", match: "" },
+        };
+
+        /* Acceptors — each validates & mutates for one proposal type */
+        var acceptors = {
+          addPlayer: function (d, p) {
+            d.errors.player = "";
+            var name = sanitize(p.name);
+            if (!name) {
+              d.errors.player = "Name is required.";
+              return;
+            }
+            if (d.players.indexOf(name) >= 0) {
+              d.errors.player = "Player already exists.";
+              return;
+            }
+            d.players.push(name);
+          },
+
+          removePlayer: function (d, p) {
+            d.errors.player = "";
+            var name = p.name;
+            var inMatch = d.matches.some(function (m) {
+              return m.home === name || m.away === name;
+            });
+            if (inMatch) {
+              d.errors.player =
+                "Cannot remove — player has matches. Delete their matches first.";
+              return;
+            }
+            d.players = d.players.filter(function (n) {
+              return n !== name;
+            });
+          },
+
+          addMatch: function (d, p) {
+            d.errors.match = "";
+            var home = sanitize(p.home),
+              away = sanitize(p.away);
+            var hs = clampInt(p.hs, 0, 99),
+              as = clampInt(p.as, 0, 99),
+              round = clampInt(p.round, 1, 999);
+            if (!home || !away) {
+              d.errors.match = "Select both players.";
+              return;
+            }
+            if (home === away) {
+              d.errors.match = "A player cannot play themselves.";
+              return;
+            }
+            if (hs === null || as === null) {
+              d.errors.match = "Scores must be numbers 0–99.";
+              return;
+            }
+            if (round === null) {
+              d.errors.match = "Round must be 1–999.";
+              return;
+            }
+            if (d.players.indexOf(home) < 0 || d.players.indexOf(away) < 0) {
+              d.errors.match = "Unknown player.";
+              return;
+            }
+            d.matches.push({
+              id: uid(),
+              round: round,
+              home: home,
+              away: away,
+              hs: hs,
+              as: as,
+            });
+            d.matches.sort(function (a, b) {
+              return a.round - b.round;
+            });
+          },
+
+          removeMatch: function (d, p) {
+            d.matches = d.matches.filter(function (m) {
+              return m.id !== p.id;
+            });
+            if (d.editingMatch === p.id) d.editingMatch = null;
+          },
+
+          startEditMatch: function (d, p) {
+            d.editingMatch = p.id;
+          },
+
+          cancelEditMatch: function (d) {
+            d.editingMatch = null;
+          },
+
+          updateMatch: function (d, p) {
+            d.errors.match = "";
+            var hs = clampInt(p.hs, 0, 99),
+              as = clampInt(p.as, 0, 99),
+              round = clampInt(p.round, 1, 999);
+            if (hs === null || as === null) {
+              d.errors.match = "Scores must be 0–99.";
+              return;
+            }
+            if (round === null) {
+              d.errors.match = "Round must be 1–999.";
+              return;
+            }
+            for (var i = 0; i < d.matches.length; i++) {
+              if (d.matches[i].id === p.id) {
+                d.matches[i] = {
+                  id: p.id,
+                  round: round,
+                  home: d.matches[i].home,
+                  away: d.matches[i].away,
+                  hs: hs,
+                  as: as,
+                };
+                break;
+              }
+            }
+            d.matches.sort(function (a, b) {
+              return a.round - b.round;
+            });
+            d.editingMatch = null;
+          },
+        };
+
+        return {
+          /** The single entry point — accept a proposal or reject it */
+          present: function (proposal) {
+            var fn = acceptors[proposal.type];
+            if (fn) fn(dataset, proposal);
+            State.render(Model.snapshot());
+          },
+          /** Immutable snapshot for State to derive views from */
+          snapshot: function () {
+            return {
+              players: dataset.players.slice(),
+              matches: dataset.matches.map(function (m) {
+                return {
+                  id: m.id,
+                  round: m.round,
+                  home: m.home,
+                  away: m.away,
+                  hs: m.hs,
+                  as: m.as,
+                };
+              }),
+              editingMatch: dataset.editingMatch,
+              errors: {
+                player: dataset.errors.player,
+                match: dataset.errors.match,
+              },
+            };
+          },
+        };
+      })();
+
+      /* ═══════════════════════════════════════════════════════
+       ACTIONS — pure proposal factories
+       ═══════════════════════════════════════════════════════ */
+      var Actions = {
+        addPlayer: function (name) {
+          Model.present({ type: "addPlayer", name: name });
+        },
+        removePlayer: function (name) {
+          Model.present({ type: "removePlayer", name: name });
+        },
+        addMatch: function (h, a, hs, as, r) {
+          Model.present({
+            type: "addMatch",
+            home: h,
+            away: a,
+            hs: hs,
+            as: as,
+            round: r,
+          });
+        },
+        removeMatch: function (id) {
+          Model.present({ type: "removeMatch", id: id });
+        },
+        startEditMatch: function (id) {
+          Model.present({ type: "startEditMatch", id: id });
+        },
+        cancelEditMatch: function () {
+          Model.present({ type: "cancelEditMatch" });
+        },
+        updateMatch: function (id, hs, as, round) {
+          Model.present({
+            type: "updateMatch",
+            id: id,
+            hs: hs,
+            as: as,
+            round: round,
+          });
+        },
+      };
+
+      /* ═══════════════════════════════════════════════════════
+       STATE — derives view representation, renders to DOM
+       ═══════════════════════════════════════════════════════ */
+      var State = (function () {
+        /* ── Derive standings (pure) ───────────────────── */
+        function deriveStandings(players, matches) {
+          var map = {};
+          for (var i = 0; i < players.length; i++) {
+            map[players[i]] = {
+              name: players[i],
+              played: 0,
+              wins: 0,
+              draws: 0,
+              losses: 0,
+              gf: 0,
+              ga: 0,
+              pts: 0,
+            };
+          }
+          for (var j = 0; j < matches.length; j++) {
+            var m = matches[j],
+              h = map[m.home],
+              a = map[m.away];
+            if (!h || !a) continue;
+            h.played++;
+            a.played++;
+            h.gf += m.hs;
+            h.ga += m.as;
+            a.gf += m.as;
+            a.ga += m.hs;
+            if (m.hs > m.as) {
+              h.wins++;
+              a.losses++;
+              h.pts += 3;
+            } else if (m.hs < m.as) {
+              a.wins++;
+              h.losses++;
+              a.pts += 3;
+            } else {
+              h.draws++;
+              a.draws++;
+              h.pts++;
+              a.pts++;
+            }
+          }
+          return Object.keys(map)
+            .map(function (k) {
+              return map[k];
+            })
+            .sort(function (a, b) {
+              if (b.pts !== a.pts) return b.pts - a.pts;
+              var gda = a.gf - a.ga,
+                gdb = b.gf - b.ga;
+              if (gdb !== gda) return gdb - gda;
+              return b.gf - a.gf;
+            });
+        }
+
+        function deriveForm(name, matches) {
+          var form = [];
+          for (var i = matches.length - 1; i >= 0 && form.length < 3; i--) {
+            var m = matches[i];
+            if (m.home === name)
+              form.push(m.hs > m.as ? "W" : m.hs < m.as ? "L" : "D");
+            else if (m.away === name)
+              form.push(m.as > m.hs ? "W" : m.as < m.hs ? "L" : "D");
+          }
+          return form;
+        }
+
+        /* ── Safe DOM clear ────────────────────────────── */
+        function clear(id) {
+          var node = document.getElementById(id);
+          while (node.firstChild) node.removeChild(node.firstChild);
+          return node;
+        }
+
+        /* ── Render sub-sections ───────────────────────── */
+        function renderSummary(standings, matches) {
+          var c = clear("summary-stats");
+          var totalGoals = 0;
+          for (var i = 0; i < matches.length; i++)
+            totalGoals += matches[i].hs + matches[i].as;
+          var avg =
+            matches.length > 0 ? (totalGoals / matches.length).toFixed(1) : "0";
+          var leader = standings.length > 0 ? standings[0] : null;
+          var items = [
+            { v: String(standings.length), l: "Players" },
+            { v: String(matches.length), l: "Matches" },
+            { v: String(totalGoals), l: "Total Goals" },
+            { v: avg, l: "Avg / Match" },
+            { v: leader ? leader.name : "–", l: "Leader" },
+            { v: leader ? leader.pts + " pts" : "–", l: "Top Score" },
+          ];
+          for (var j = 0; j < items.length; j++) {
+            c.appendChild(
+              el("div", { className: "stat-box" }, [
+                el("div", { className: "val", textContent: items[j].v }),
+                el("div", { className: "lbl", textContent: items[j].l }),
+              ]),
+            );
+          }
+        }
+
+        function renderTopScorers(standings) {
+          var c = clear("top-scorers-chart");
+          var byGoals = standings.slice().sort(function (a, b) {
+            return b.gf - a.gf;
+          });
+          var max = byGoals.length > 0 ? byGoals[0].gf : 1;
+          for (var i = 0; i < Math.min(byGoals.length, 6); i++) {
+            var s = byGoals[i],
+              pct = max > 0 ? Math.round((s.gf / max) * 100) : 0;
+            var fill = el("div", { className: "bar-fill" }, [String(s.gf)]);
+            fill.style.width = Math.max(pct, 10) + "%";
+            c.appendChild(
+              el("div", { className: "bar-row" }, [
+                el("span", { className: "name", textContent: s.name }),
+                el("div", { className: "bar-track" }, [fill]),
+              ]),
+            );
+          }
+          if (standings.length === 0)
+            c.appendChild(
+              el("p", { className: "empty-msg", textContent: "No data yet." }),
+            );
+        }
+
+        function renderRecentResults(matches) {
+          var c = clear("recent-results");
+          var last = matches.slice(-4);
+          for (var i = last.length - 1; i >= 0; i--)
+            c.appendChild(matchCard(last[i]));
+          if (matches.length === 0)
+            c.appendChild(
+              el("p", {
+                className: "empty-msg",
+                textContent: "No matches yet.",
+              }),
+            );
+        }
+
+        function matchCard(m) {
+          var hw = m.hs > m.as,
+            aw = m.as > m.hs;
+          return el("div", { className: "match" }, [
+            el("span", {
+              className: "team" + (hw ? " winner" : ""),
+              textContent: m.home,
+            }),
+            el("span", {
+              className: "score",
+              textContent: m.hs + " – " + m.as,
+            }),
+            el("span", {
+              className: "team" + (aw ? " winner" : ""),
+              textContent: m.away,
+            }),
+          ]);
+        }
+
+        function renderStandings(standings) {
+          var tb = clear("standings-body");
+          for (var i = 0; i < standings.length; i++) {
+            var s = standings[i],
+              gd = s.gf - s.ga,
+              rc = i < 3 ? "rank-" + (i + 1) : "";
+            tb.appendChild(
+              el("tr", null, [
+                el("td", { className: rc, textContent: String(i + 1) }),
+                el("td", { className: rc, textContent: s.name }),
+                el("td", { textContent: String(s.played) }),
+                el("td", { textContent: String(s.wins) }),
+                el("td", { textContent: String(s.draws) }),
+                el("td", { textContent: String(s.losses) }),
+                el("td", { textContent: String(s.gf) }),
+                el("td", { textContent: String(s.ga) }),
+                el("td", { textContent: (gd >= 0 ? "+" : "") + gd }),
+                el("td", { textContent: String(s.pts) }),
+              ]),
+            );
+          }
+        }
+
+        function renderAllMatches(snap) {
+          var c = clear("all-matches");
+          var matches = snap.matches,
+            editing = snap.editingMatch;
+          var curRound = 0;
+          for (var i = 0; i < matches.length; i++) {
+            var m = matches[i];
+            if (m.round !== curRound) {
+              curRound = m.round;
+              c.appendChild(
+                el("div", {
+                  className: "round-label",
+                  textContent: "Round " + curRound,
+                }),
+              );
+            }
+            if (editing === m.id) {
+              c.appendChild(editMatchRow(m));
+            } else {
+              c.appendChild(matchCardWithActions(m));
+            }
+          }
+          if (matches.length === 0)
+            c.appendChild(
+              el("p", {
+                className: "empty-msg",
+                textContent: "No matches yet.",
+              }),
+            );
+        }
+
+        function matchCardWithActions(m) {
+          var hw = m.hs > m.as,
+            aw = m.as > m.hs;
+          var row = el("div", { className: "match" }, [
+            el("span", {
+              className: "team" + (hw ? " winner" : ""),
+              textContent: m.home,
+            }),
+            el("span", {
+              className: "score",
+              textContent: m.hs + " – " + m.as,
+            }),
+            el("span", {
+              className: "team" + (aw ? " winner" : ""),
+              textContent: m.away,
+            }),
+          ]);
+          var btnEdit = el("button", {
+            className: "btn-edit",
+            textContent: "Edit",
+          });
+          var btnDel = el("button", {
+            className: "btn-danger",
+            textContent: "Delete",
+          });
+          btnEdit.addEventListener("click", function () {
+            Actions.startEditMatch(m.id);
+          });
+          btnDel.addEventListener("click", function () {
+            Actions.removeMatch(m.id);
+          });
+          var acts = el("div", { className: "actions-cell" }, [
+            btnEdit,
+            btnDel,
+          ]);
+          acts.style.cssText =
+            "display:flex;gap:.3rem;justify-content:center;margin-top:-.2rem;margin-bottom:.3rem;";
+          var wrapper = el("div", null, [row, acts]);
+          return wrapper;
+        }
+
+        function editMatchRow(m) {
+          var inHs = el("input", {
+            type: "number",
+            min: "0",
+            max: "99",
+            value: String(m.hs),
+          });
+          inHs.style.width = "50px";
+          var inAs = el("input", {
+            type: "number",
+            min: "0",
+            max: "99",
+            value: String(m.as),
+          });
+          inAs.style.width = "50px";
+          var inRd = el("input", {
+            type: "number",
+            min: "1",
+            max: "999",
+            value: String(m.round),
+          });
+          inRd.style.width = "55px";
+
+          /* Style inputs to match theme */
+          [inHs, inAs, inRd].forEach(function (inp) {
+            inp.style.cssText +=
+              "background:var(--surface-2);border:1px solid var(--accent);border-radius:4px;color:var(--text);padding:.3rem .4rem;font-size:.85rem;font-family:inherit;outline:none;";
+          });
+
+          var btnSave = el("button", {
+            className: "btn btn-primary",
+            textContent: "Save",
+          });
+          var btnCancel = el("button", {
+            className: "btn btn-cancel",
+            textContent: "Cancel",
+          });
+          btnSave.addEventListener("click", function () {
+            Actions.updateMatch(m.id, inHs.value, inAs.value, inRd.value);
+          });
+          btnCancel.addEventListener("click", function () {
+            Actions.cancelEditMatch();
+          });
+
+          var row = el("div", { className: "match" }, [
+            el("span", { className: "team", textContent: m.home }),
+            el("span", null, [inHs, document.createTextNode(" – "), inAs]),
+            el("span", { className: "team", textContent: m.away }),
+          ]);
+          row.style.borderColor = "var(--accent)";
+          var controls = el("div", { className: "form-row" }, [
+            el("div", { className: "field" }, [
+              el("label", { textContent: "Round" }),
+              inRd,
+            ]),
+            el("div", null, [btnSave, document.createTextNode(" "), btnCancel]),
+          ]);
+          controls.style.cssText =
+            "margin-top:.3rem;margin-bottom:.5rem;align-items:flex-end;";
+          return el("div", null, [row, controls]);
+        }
+
+        function renderPlayerSelects(players) {
+          var ids = ["match-home", "match-away"];
+          for (var i = 0; i < ids.length; i++) {
+            var sel = document.getElementById(ids[i]);
+            var val = sel.value;
+            while (sel.firstChild) sel.removeChild(sel.firstChild);
+            sel.appendChild(
+              el("option", { value: "", textContent: "Select…" }),
+            );
+            for (var j = 0; j < players.length; j++) {
+              var opt = el("option", {
+                value: players[j],
+                textContent: players[j],
+              });
+              if (players[j] === val) opt.selected = true;
+              sel.appendChild(opt);
+            }
+          }
+        }
+
+        function renderPlayerStats(standings, matches) {
+          var tb = clear("player-stats-body");
+          for (var i = 0; i < standings.length; i++) {
+            var s = standings[i];
+            var winPct =
+              s.played > 0 ? Math.round((s.wins / s.played) * 100) + "%" : "–";
+            var form = deriveForm(s.name, matches);
+            var formCell = el("td");
+            for (var f = 0; f < form.length; f++) {
+              var cls =
+                form[f] === "W"
+                  ? "badge badge-w"
+                  : form[f] === "L"
+                    ? "badge badge-l"
+                    : "badge badge-d";
+              formCell.appendChild(
+                el("span", { className: cls, textContent: form[f] }),
+              );
+              if (f < form.length - 1)
+                formCell.appendChild(document.createTextNode(" "));
+            }
+            var btnDel = el("button", {
+              className: "btn-danger",
+              textContent: "Remove",
+            });
+            (function (name) {
+              btnDel.addEventListener("click", function () {
+                Actions.removePlayer(name);
+              });
+            })(s.name);
+
+            tb.appendChild(
+              el("tr", null, [
+                el("td", { textContent: s.name }),
+                el("td", { textContent: String(s.played) }),
+                el("td", { textContent: String(s.gf) }),
+                el("td", { textContent: winPct }),
+                formCell,
+                el("td", null, [btnDel]),
+              ]),
+            );
+          }
+        }
+
+        function renderErrors(errors) {
+          document.getElementById("player-error").textContent = errors.player;
+          document.getElementById("match-error").textContent = errors.match;
+        }
+
+        /* ── Main State.render — the SAM "State representation" */
+        return {
+          render: function (snap) {
+            var standings = deriveStandings(snap.players, snap.matches);
+            renderSummary(standings, snap.matches);
+            renderTopScorers(standings);
+            renderRecentResults(snap.matches);
+            renderStandings(standings);
+            renderAllMatches(snap);
+            renderPlayerSelects(snap.players);
+            renderPlayerStats(standings, snap.matches);
+            renderErrors(snap.errors);
+
+            /* ── NAP (next-action predicate) ─────────── */
+            /* Currently no automatic actions needed,
+             but this is where you'd trigger them, e.g.:
+             if (standings.length > 0 && allMatchesPlayed)
+               Actions.advanceToPlayoffs();              */
+          },
+        };
+      })();
+
+      /* ═══════════════════════════════════════════════════════
+       VIEW WIRING — DOM events → Actions (never touch Model)
+       ═══════════════════════════════════════════════════════ */
+      (function initView() {
+        /* Add Player */
+        document
+          .getElementById("btn-add-player")
+          .addEventListener("click", function () {
+            var inp = document.getElementById("player-name");
+            Actions.addPlayer(inp.value);
+            inp.value = "";
+          });
+        document
+          .getElementById("player-name")
+          .addEventListener("keydown", function (e) {
+            if (e.key === "Enter")
+              document.getElementById("btn-add-player").click();
+          });
+
+        /* Add Match */
+        document
+          .getElementById("btn-add-match")
+          .addEventListener("click", function () {
+            Actions.addMatch(
+              document.getElementById("match-home").value,
+              document.getElementById("match-away").value,
+              document.getElementById("match-home-score").value,
+              document.getElementById("match-away-score").value,
+              document.getElementById("match-round").value,
+            );
+            document.getElementById("match-home-score").value = "";
+            document.getElementById("match-away-score").value = "";
+            document.getElementById("match-round").value = "";
+          });
+
+        /* Tabs */
+        var btns = document.querySelectorAll("[role=tab]");
+        var panels = document.querySelectorAll("[role=tabpanel]");
+        function activate(btn) {
+          for (var i = 0; i < btns.length; i++) {
+            btns[i].setAttribute("aria-selected", "false");
+            btns[i].setAttribute("tabindex", "-1");
+          }
+          for (var j = 0; j < panels.length; j++)
+            panels[j].classList.remove("active");
+          btn.setAttribute("aria-selected", "true");
+          btn.removeAttribute("tabindex");
+          var t = document.getElementById(btn.getAttribute("aria-controls"));
+          if (t) t.classList.add("active");
+        }
+        for (var k = 0; k < btns.length; k++) {
+          btns[k].addEventListener("click", function (e) {
+            activate(e.currentTarget);
+          });
+          btns[k].addEventListener("keydown", function (e) {
+            var idx = Array.prototype.indexOf.call(btns, e.currentTarget),
+              next = -1;
+            if (e.key === "ArrowRight" || e.key === "ArrowDown")
+              next = (idx + 1) % btns.length;
+            if (e.key === "ArrowLeft" || e.key === "ArrowUp")
+              next = (idx - 1 + btns.length) % btns.length;
+            if (next >= 0) {
+              e.preventDefault();
+              btns[next].focus();
+              activate(btns[next]);
+            }
+          });
+        }
+
+        /* Initial render */
+        State.render(Model.snapshot());
+      })();
+    </script>
+  </body>
+</html>
