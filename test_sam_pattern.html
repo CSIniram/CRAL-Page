@@ -14,8 +14,7 @@
   -->
     <!-- Meta-CSP fallback for local/static serving.
        'unsafe-inline' for script-src is required for single-file delivery;
-       extract <script> to a .js file in production and remove it.
-       frame-ancestors and X-Frame-Options are HTTP-header-only — omitted here. -->
+       extract <script> to a .js file in production and remove it. -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'none'; base-uri 'none'; form-action 'none';"
@@ -313,12 +312,14 @@
         display: flex;
         gap: 0.5rem;
         flex-wrap: wrap;
+        justify-content: center;
         align-items: flex-end;
         margin-bottom: 0.75rem;
       }
       .field {
         display: flex;
         flex-direction: column;
+        text-align: start;
         gap: 0.2rem;
       }
       .field label {
@@ -340,6 +341,9 @@
         outline: none;
         transition: border-color 0.2s;
       }
+      .field select {
+        min-width: 200px;
+      }
       .field input:focus,
       .field select:focus {
         border-color: var(--accent);
@@ -349,6 +353,37 @@
       }
       .field select option {
         background: var(--surface);
+      }
+
+      .match-grid {
+        display: grid;
+        grid-template-columns: 25fr 1fr 25fr;
+        text-align: center;
+        margin-bottom: 0.75rem;
+      }
+
+      .match-card {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: var(--radius);
+        padding: 1rem;
+      }
+
+      .match-row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 5px;
+      }
+
+      .match-player-select {
+        flex-grow: 2;
+      }
+
+      .match-submit {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        gap: 10px;
       }
 
       .btn {
@@ -468,7 +503,7 @@
           aria-controls="panel-overview"
           id="tab-overview"
         >
-          Overview
+          Panoramica
         </button>
         <button
           class="tab-btn"
@@ -477,7 +512,7 @@
           aria-controls="panel-standings"
           id="tab-standings"
         >
-          Standings
+          Classifica
         </button>
         <button
           class="tab-btn"
@@ -486,7 +521,7 @@
           aria-controls="panel-matches"
           id="tab-matches"
         >
-          Matches
+          Partite
         </button>
         <button
           class="tab-btn"
@@ -495,7 +530,7 @@
           aria-controls="panel-players"
           id="tab-players"
         >
-          Players
+          Giocatori
         </button>
       </nav>
 
@@ -507,11 +542,11 @@
       >
         <div class="stat-grid" id="summary-stats"></div>
         <div class="card">
-          <h2>Top Scorers</h2>
+          <h2>Capocannonieri</h2>
           <div id="top-scorers-chart"></div>
         </div>
         <div class="card">
-          <h2>Recent Results</h2>
+          <h2>Risultati Recenti</h2>
           <div id="recent-results"></div>
         </div>
       </section>
@@ -523,21 +558,20 @@
         aria-labelledby="tab-standings"
       >
         <div class="card">
-          <h2>League Table</h2>
+          <h2>Classifica Generale</h2>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Player</th>
-                  <th>P</th>
-                  <th>W</th>
-                  <th>D</th>
-                  <th>L</th>
+                  <th>Giocatore</th>
+                  <th>G</th>
+                  <th>V</th>
+                  <th>S</th>
                   <th>GF</th>
-                  <th>GA</th>
-                  <th>GD</th>
-                  <th>Pts</th>
+                  <th>GS</th>
+                  <th>DR</th>
+                  <th>Pti</th>
                 </tr>
               </thead>
               <tbody id="standings-body"></tbody>
@@ -553,25 +587,12 @@
         aria-labelledby="tab-matches"
       >
         <div class="card">
-          <h2>Add Match</h2>
+          <h2>Aggiungi Partita</h2>
           <div class="error-msg" id="match-error"></div>
-          <div class="form-row">
-            <div class="field">
-              <label for="match-home">Home</label
-              ><select id="match-home"></select>
-            </div>
-            <div class="field">
-              <label for="match-home-score">Score</label
-              ><input
-                id="match-home-score"
-                type="number"
-                min="0"
-                max="99"
-                placeholder="0"
-                style="width: 60px"
-              />
-            </div>
-            <div class="field">
+          <div class="match-grid">
+            <!-- First row -->
+            <span>Casa</span>
+            <div>
               <label>&nbsp;</label
               ><span
                 style="
@@ -582,23 +603,88 @@
                 >vs</span
               >
             </div>
-            <div class="field">
-              <label for="match-away-score">Score</label
-              ><input
-                id="match-away-score"
-                type="number"
-                min="0"
-                max="99"
-                placeholder="0"
-                style="width: 60px"
-              />
+            <span>Trasferta</span>
+            <!-- Second row -->
+            <div class="match-card">
+              <div class="match-row">
+                <div class="field match-player-select">
+                  <label for="match-home">Difensore</label
+                  ><select id="match-home-d"></select>
+                </div>
+                <div class="field">
+                  <label for="match-home-score-d">Gol</label
+                  ><input
+                    id="match-home-score-d"
+                    type="number"
+                    min="0"
+                    max="99"
+                    placeholder="0"
+                    style="width: 60px"
+                  />
+                </div>
+              </div>
+              <div class="match-row">
+                <div class="field match-player-select">
+                  <label for="match-home">Attaccante</label
+                  ><select id="match-home-a"></select>
+                </div>
+                <div class="field">
+                  <label for="match-home-score-a">Gol</label
+                  ><input
+                    id="match-home-score-a"
+                    type="number"
+                    min="0"
+                    max="99"
+                    placeholder="0"
+                    style="width: 60px"
+                  />
+                </div>
+              </div>
             </div>
-            <div class="field">
-              <label for="match-away">Away</label
-              ><select id="match-away"></select>
+            <div>
+              <!-- Empty div as a separator -->
             </div>
+            <div class="match-card">
+              <div class="match-row">
+                <div class="field match-player-select">
+                  <label for="match-away">Difensore</label
+                  ><select id="match-away-d"></select>
+                </div>
+                <div class="field">
+                  <label for="match-away-score-d">Gol</label
+                  ><input
+                    id="match-away-score-d"
+                    type="number"
+                    min="0"
+                    max="99"
+                    placeholder="0"
+                    style="width: 60px"
+                  />
+                </div>
+              </div>
+              <div class="match-row">
+                <div class="field match-player-select">
+                  <label for="match-away">Attaccante</label
+                  ><select id="match-away-a"></select>
+                </div>
+                <div class="field">
+                  <label for="match-away-score-a">Gol</label
+                  ><input
+                    id="match-away-score-a"
+                    type="number"
+                    min="0"
+                    max="99"
+                    placeholder="0"
+                    style="width: 60px"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Add match button -->
+          <div class="match-submit">
             <div class="field">
-              <label for="match-round">Round</label
+              <label for="match-round">Giornata</label
               ><input
                 id="match-round"
                 type="number"
@@ -611,13 +697,13 @@
             <div class="field">
               <label>&nbsp;</label
               ><button class="btn btn-primary" id="btn-add-match">
-                Add Match
+                Aggiungi Partita
               </button>
             </div>
           </div>
         </div>
         <div class="card">
-          <h2>All Matches</h2>
+          <h2>Tutte le partite</h2>
           <div id="all-matches"></div>
         </div>
       </section>
@@ -629,37 +715,55 @@
         aria-labelledby="tab-players"
       >
         <div class="card">
-          <h2>Add Player</h2>
+          <h2>Aggiungi Giocatore</h2>
           <div class="error-msg" id="player-error"></div>
           <div class="form-row">
             <div class="field">
-              <label for="player-name">Name</label
-              ><input
-                id="player-name"
+              <label for="player-name">Nome</label>
+              <input
                 type="text"
-                placeholder="Player name"
-                maxlength="30"
+                id="player-name"
+                placeholder="Nome"
+                maxlength="50"
               />
             </div>
             <div class="field">
-              <label>&nbsp;</label
-              ><button class="btn btn-primary" id="btn-add-player">
-                Add Player
+              <label for="player-surname">Cognome</label>
+              <input
+                type="text"
+                id="player-surname"
+                placeholder="Cognome"
+                maxlength="50"
+              />
+            </div>
+            <div class="field">
+              <label for="player-role">Ruolo</label>
+              <select id="player-role">
+                <option value="" disabled selected>Seleziona un ruolo</option>
+                <option value="D">Difensore</option>
+                <option value="A">Attaccante</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>&nbsp;</label>
+              <button class="btn btn-primary" id="btn-add-player">
+                Aggiungi Giocatore
               </button>
             </div>
           </div>
         </div>
         <div class="card">
-          <h2>Roster</h2>
+          <h2>Rosa</h2>
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
-                  <th>Player</th>
-                  <th>Matches</th>
-                  <th>Goals</th>
-                  <th>Win %</th>
-                  <th>Form</th>
+                  <th>Giocatore</th>
+                  <th>Ruolo</th>
+                  <th>Partite</th>
+                  <th>Goal</th>
+                  <th>Vittorie %</th>
+                  <th>Forma</th>
                   <th></th>
                 </tr>
               </thead>
@@ -679,176 +783,423 @@
 
     <script>
       "use strict";
+      // @ts-check
 
       /* ═══════════════════════════════════════════════════════
-       SAM PATTERN — State · Action · Model
-       ═══════════════════════════════════════════════════════
+         SAM PATTERN — State · Action · Model
+         ═══════════════════════════════════════════════════════
 
-       Flow:  View → Action(event) → proposal → Model.present(proposal)
-                                                       ↓
-                                              Model mutates dataset
-                                                       ↓
-                                              State.render(model)
-                                                       ↓
-                                              NAP (next-action predicate)
-                                                       ↓
-                                              View updated
-    */
+         Flow:  View → Action(event) → proposal → Model.present(proposal)
+                                                         ↓
+                                                Model mutates dataset
+                                                         ↓
+                                                State.render(model)
+                                                         ↓
+                                                NAP (next-action predicate)
+                                                         ↓
+                                                View updated
+      */
 
       /* ── Helpers ───────────────────────────────────────── */
-      var sanitize = (function () {
+      const sanitize = (function () {
         /* Whitelist: letters, digits, spaces, hyphens, dots, underscores */
-        var RE = /[^a-zA-Z0-9À-ÿ \-._]/g;
+        const RE = /[^a-zA-Z0-9À-ÿ '\-._]/g;
         return function (s) {
           return String(s).trim().replace(RE, "").substring(0, 30);
         };
       })();
 
       function clampInt(v, lo, hi) {
-        var n = parseInt(v, 10);
+        const n = parseInt(v, 10);
         return Number.isFinite(n) ? Math.max(lo, Math.min(hi, n)) : null;
       }
 
-      var idCounter = 0;
+      function validateName(name) {
+        // Length check first (cheap operation)
+        if (!name || name.length < 1 || name.length > 50) {
+          return false;
+        }
+        // Allows Unicode letters, spaces, hyphens, apostrophes, and dots
+        const nameRegex = /^[\p{L}\p{M}'\-\s.]+$/u;
+        return nameRegex.test(name.trim());
+      }
+
+      let idCounter = 0;
       function uid() {
         return "m" + ++idCounter + "_" + Date.now();
       }
 
       function el(tag, attrs, children) {
-        var node = document.createElement(tag);
+        const node = document.createElement(tag);
         if (attrs) {
-          var keys = Object.keys(attrs);
-          for (var i = 0; i < keys.length; i++) {
-            var k = keys[i];
-            if (k === "textContent" || k === "className") node[k] = attrs[k];
-            else node.setAttribute(k, attrs[k]);
+          for (const att of Object.keys(attrs)) {
+            if (att === "textContent" || att === "className")
+              node[att] = attrs[att];
+            else node.setAttribute(att, attrs[att]);
           }
         }
         if (children) {
-          for (var j = 0; j < children.length; j++) {
-            if (typeof children[j] === "string")
-              node.appendChild(document.createTextNode(children[j]));
-            else if (children[j]) node.appendChild(children[j]);
+          for (const ch of children) {
+            if (typeof ch === "string")
+              node.appendChild(document.createTextNode(ch));
+            else if (ch) node.appendChild(ch);
           }
         }
         return node;
       }
 
+      function comparePlayer(player1) {
+        return (player2) =>
+          player1.name === player2.name &&
+          player1.surname === player2.surname &&
+          player1.role === player2.role;
+      }
+
+      /**
+       * @typedef {Object} Player
+       * @property {string} name
+       * @property {string} surname
+       * @property {"A" | "D"} role
+       */
+
+      /**
+       * @typedef {Object} Team
+       * @property {Player} A - Player in attack position
+       * @property {Player} D - Player in defense position
+       */
+
       /* ═══════════════════════════════════════════════════════
-       MODEL — single mutable dataset, guarded by present()
-       ═══════════════════════════════════════════════════════ */
-      var Model = (function () {
+         MODEL — single mutable dataset, guarded by present()
+         ═══════════════════════════════════════════════════════ */
+      const Model = (function () {
         /* Private state — the only mutable data in the system */
-        var dataset = {
+        const dataset = {
           players: [
-            "Alice",
-            "Bob",
-            "Carlos",
-            "Diana",
-            "Ethan",
-            "Fiona",
-            "Gus",
-            "Hana",
+            {
+              id: "p1",
+              name: "Pino",
+              surname: "Speranza",
+              role: "A",
+            },
+            {
+              id: "p2",
+              name: "Giulio",
+              surname: "Villani",
+              role: "D",
+            },
+            {
+              id: "p3",
+              name: "Pierpaolo",
+              surname: "Mennucci",
+              role: "D",
+            },
+            {
+              id: "p4",
+              name: "Daniel",
+              surname: "Marini",
+              role: "D",
+            },
+            {
+              id: "p5",
+              name: "Vincenzo",
+              surname: "Berardi",
+              role: "A",
+            },
+            {
+              id: "p6",
+              name: "Matteo",
+              surname: "De Ieso",
+              role: "A",
+            },
+            {
+              id: "p7",
+              name: "Roberto",
+              surname: "Masciarelli",
+              role: "A",
+            },
+            {
+              id: "p8",
+              name: "Simone",
+              surname: "Cannella",
+              role: "A",
+            },
+            {
+              id: "p9",
+              name: "Lorenzo",
+              surname: "D'Alleva",
+              role: "A",
+            },
           ],
           matches: [
-            { id: "s1", round: 1, home: "Alice", away: "Bob", hs: 10, as: 7 },
-            { id: "s2", round: 1, home: "Carlos", away: "Diana", hs: 8, as: 8 },
-            { id: "s3", round: 1, home: "Ethan", away: "Fiona", hs: 10, as: 5 },
-            { id: "s4", round: 1, home: "Gus", away: "Hana", hs: 6, as: 10 },
             {
-              id: "s5",
-              round: 2,
-              home: "Alice",
-              away: "Carlos",
-              hs: 10,
-              as: 6,
+              id: "m1",
+              round: 1,
+              home: {
+                D: {
+                  id: "p4",
+                  name: "Daniel",
+                  surname: "Marini",
+                  role: "D",
+                  score: 3,
+                },
+                A: {
+                  id: "p7",
+                  name: "Roberto",
+                  surname: "Masciarelli",
+                  role: "A",
+                  score: 5,
+                },
+              },
+              away: {
+                D: {
+                  id: "p3",
+                  name: "Pierpaolo",
+                  surname: "Mennucci",
+                  role: "D",
+                  score: 3,
+                },
+                A: {
+                  id: "p1",
+                  name: "Pino",
+                  surname: "Speranza",
+                  role: "A",
+                  score: 4,
+                },
+              },
+              hScore: 7,
+              aScore: 8,
             },
-            { id: "s6", round: 2, home: "Bob", away: "Ethan", hs: 9, as: 10 },
-            { id: "s7", round: 2, home: "Diana", away: "Gus", hs: 10, as: 4 },
-            { id: "s8", round: 2, home: "Fiona", away: "Hana", hs: 7, as: 10 },
-            { id: "s9", round: 3, home: "Alice", away: "Ethan", hs: 8, as: 8 },
-            { id: "s10", round: 3, home: "Bob", away: "Diana", hs: 10, as: 9 },
             {
-              id: "s11",
-              round: 3,
-              home: "Carlos",
-              away: "Hana",
-              hs: 6,
-              as: 10,
+              id: "m2",
+              round: 1,
+              home: {
+                D: {
+                  id: "p6",
+                  name: "Matteo",
+                  surname: "De Ieso",
+                  role: "D",
+                  score: 5,
+                },
+                A: {
+                  id: "p8",
+                  name: "Simone",
+                  surname: "Cannella",
+                  role: "A",
+                  score: 3,
+                },
+              },
+              away: {
+                D: {
+                  id: "p2",
+                  name: "Giulio",
+                  surname: "Villani",
+                  role: "D",
+                  score: 2,
+                },
+                A: {
+                  id: "p9",
+                  name: "Lorenzo",
+                  surname: "D'Alleva",
+                  role: "A",
+                  score: 3,
+                },
+              },
+              hScore: 8,
+              aScore: 5,
             },
-            { id: "s12", round: 3, home: "Fiona", away: "Gus", hs: 10, as: 3 },
           ],
+          // Maps <select> ID with player ID.
+          selectedPlayers: new Map(),
           /* Transient UI state */
           editingMatch: null,
           errors: { player: "", match: "" },
         };
 
+        /**
+         * @typedef {Object} Proposal
+         * @property {string} type
+         * @property {any} payload
+         */
         /* Acceptors — each validates & mutates for one proposal type */
-        var acceptors = {
+        const acceptors = {
           addPlayer: function (d, p) {
             d.errors.player = "";
-            var name = sanitize(p.name);
+            const name = sanitize(p.payload?.name);
             if (!name) {
-              d.errors.player = "Name is required.";
+              d.errors.player = "Il nome è obbligatorio";
               return;
             }
-            if (d.players.indexOf(name) >= 0) {
-              d.errors.player = "Player already exists.";
+            const surname = sanitize(p.payload?.surname);
+            if (!surname) {
+              d.errors.player = "Il cognome è obbligatorio";
               return;
             }
-            d.players.push(name);
+            if (!p.payload?.role) {
+              d.errors.player = "Il ruolo è obbligatorio";
+              return;
+            }
+            if (d.players.findIndex(comparePlayer(p.payload)) >= 0) {
+              d.errors.player = "Giocatore già presente.";
+              return;
+            }
+            d.players.push({ id: uid(), ...p.payload });
           },
 
           removePlayer: function (d, p) {
             d.errors.player = "";
-            var name = p.name;
-            var inMatch = d.matches.some(function (m) {
-              return m.home === name || m.away === name;
-            });
-            if (inMatch) {
+            const id = p.payload;
+            const removedPlayerIdx = d.players.findIndex(
+              (player) => player.id === id,
+            );
+            if (removedPlayerIdx === -1) {
               d.errors.player =
-                "Cannot remove — player has matches. Delete their matches first.";
+                "Rimozione non permessa - Il giocatore non è presente nel DB.";
               return;
             }
-            d.players = d.players.filter(function (n) {
-              return n !== name;
-            });
+            const removedPlayer = d.players[removedPlayerIdx];
+            const role = removedPlayer.role;
+            const inMatch = d.matches.some(
+              (m) => m.home[role].id === id || m.away[role].id === id,
+            );
+            if (inMatch) {
+              d.errors.player =
+                "Rimozione non permessa - Il giocatore ha delle partite associate. Elimina prima le sue partite.";
+              return;
+            }
+            d.players.splice(removedPlayerIdx, 1);
+          },
+
+          selectPlayer: function (d, p) {
+            const selPlayers = d.selectedPlayers;
+            // If already selected, removes it.
+            if (p.payload.id === "") {
+              selPlayers.delete(p.payload.node);
+              return;
+            }
+            selPlayers.set(p.payload.node, p.payload.id);
+          },
+
+          checkMatchNumbers: function (d, p) {
+            d.errors.match = "";
+            const round = clampInt(p.payload?.round, 1, 999);
+            if (round === null) {
+              d.errors.match = "La giornata deve essere tra 1 e 999.";
+              return;
+            }
+            let hScore = clampInt(p.payload?.hScore, 0, 99);
+            const hScoreD = clampInt(p.payload?.hScoreD, 0, 99);
+            const hScoreA = clampInt(p.payload?.hScoreA, 0, 99);
+            let aScore = clampInt(p.payload?.aScore, 0, 99);
+            const aScoreD = clampInt(p.payload?.aScoreD, 0, 99);
+            const aScoreA = clampInt(p.payload?.aScoreA, 0, 99);
+            if (
+              (hScore === null && hScoreD === null && hScoreA === null) ||
+              hScore < 0 ||
+              hScoreD < 0 ||
+              hScoreA < 0 ||
+              (aScore === null && aScoreD === null && aScoreA === null) ||
+              aScore < 0 ||
+              aScoreD < 0 ||
+              aScoreA < 0
+            ) {
+              d.errors.match = "I punteggi devono essere numeri tra 0 e 99.";
+              return;
+            }
+            hScore ??= hScoreD + hScoreA;
+            aScore ??= aScoreD + aScoreA;
+            const maxScore = Math.max(hScore, aScore);
+            const minScore = Math.min(hScore, aScore);
+            // Checks if maxScore is 8 without draw, or if one is a value x and
+            // the other is x+2 (tiebreak).
+            if (
+              minScore === maxScore ||
+              maxScore < 8 ||
+              (8 < maxScore && maxScore !== minScore + 2)
+            ) {
+              d.errors.match =
+                "Sono valide solo vittorie piene (un punteggio " +
+                "uguale a 8) o ai vantaggi (scarto di due gol).";
+              return;
+            }
+          },
+
+          checkMatch: function (d, p) {
+            d.errors.match = "";
+            // Checks for validation errors.
+            this.checkMatchNumbers(d, p);
+            if (d.errors.match !== "") return;
+            const home = p.payload?.home;
+            const away = p.payload?.away;
+            if (!home || !away) {
+              d.errors.match = "Seleziona entrambe le squadre";
+              return;
+            }
+            const homeD = d.players.find((p) => p.id === home.D);
+            const homeA = d.players.find((p) => p.id === home.A);
+            const awayD = d.players.find((p) => p.id === away.D);
+            const awayA = d.players.find((p) => p.id === away.A);
+            if (!homeD) {
+              d.errors.match = "Difensore in Casa sconosciuto.";
+              return;
+            }
+            if (!homeA) {
+              d.errors.match = "Attaccante in Casa sconosciuto.";
+              return;
+            }
+            if (!awayD) {
+              d.errors.match = "Difensore in Trasferta sconosciuto.";
+              return;
+            }
+            if (!awayA) {
+              d.errors.match = "Attaccante in Trasferta sconosciuto.";
+              return;
+            }
+            // Checks that each match has unique players (no player plays with/against himself).
+            if (
+              home.D === home.A ||
+              home.D === away.D ||
+              home.D === away.A ||
+              home.A === away.D ||
+              home.A === away.A ||
+              away.D === away.A
+            ) {
+              d.errors.match =
+                "Non è possibile scegliere più volte lo stesso giocatore.";
+              return;
+            }
           },
 
           addMatch: function (d, p) {
             d.errors.match = "";
-            var home = sanitize(p.home),
-              away = sanitize(p.away);
-            var hs = clampInt(p.hs, 0, 99),
-              as = clampInt(p.as, 0, 99),
-              round = clampInt(p.round, 1, 999);
-            if (!home || !away) {
-              d.errors.match = "Select both players.";
-              return;
-            }
-            if (home === away) {
-              d.errors.match = "A player cannot play themselves.";
-              return;
-            }
-            if (hs === null || as === null) {
-              d.errors.match = "Scores must be numbers 0–99.";
-              return;
-            }
-            if (round === null) {
-              d.errors.match = "Round must be 1–999.";
-              return;
-            }
-            if (d.players.indexOf(home) < 0 || d.players.indexOf(away) < 0) {
-              d.errors.match = "Unknown player.";
-              return;
-            }
+            // Checks for validation errors.
+            this.checkMatch(d, p);
+            if (d.errors.match !== "") return;
+            const home = p.payload?.home;
+            const away = p.payload?.away;
+            const hScoreD = clampInt(p.payload?.hScoreD, 0, 99);
+            const hScoreA = clampInt(p.payload?.hScoreA, 0, 99);
+            const aScoreD = clampInt(p.payload?.aScoreD, 0, 99);
+            const aScoreA = clampInt(p.payload?.aScoreA, 0, 99);
+            const hScore = hScoreD + hScoreA;
+            const aScore = aScoreD + aScoreA;
+            const round = clampInt(p.payload?.round, 1, 999);
+            const homeD = d.players.find((p) => p.id === home.D);
+            const homeA = d.players.find((p) => p.id === home.A);
+            const awayD = d.players.find((p) => p.id === away.D);
+            const awayA = d.players.find((p) => p.id === away.A);
             d.matches.push({
               id: uid(),
               round: round,
-              home: home,
-              away: away,
-              hs: hs,
-              as: as,
+              home: {
+                D: { ...homeD, score: hScoreD },
+                A: { ...homeA, score: hScoreA },
+              },
+              away: {
+                D: { ...awayD, score: aScoreD },
+                A: { ...awayA, score: aScoreA },
+              },
+              hScore: hScore,
+              aScore: aScore,
             });
             d.matches.sort(function (a, b) {
               return a.round - b.round;
@@ -856,14 +1207,19 @@
           },
 
           removeMatch: function (d, p) {
-            d.matches = d.matches.filter(function (m) {
-              return m.id !== p.id;
-            });
-            if (d.editingMatch === p.id) d.editingMatch = null;
+            const id = p.payload;
+            if (id) {
+              const removedMatchIdx = d.matches.findIndex(
+                (match) => match.id === id,
+              );
+              if (removedMatchIdx === -1) return;
+              d.matches.splice(removedMatchIdx, 1);
+              if (d.editingMatch === id) d.editingMatch = null;
+            }
           },
 
           startEditMatch: function (d, p) {
-            d.editingMatch = p.id;
+            d.editingMatch = p.payload;
           },
 
           cancelEditMatch: function (d) {
@@ -872,33 +1228,33 @@
 
           updateMatch: function (d, p) {
             d.errors.match = "";
-            var hs = clampInt(p.hs, 0, 99),
-              as = clampInt(p.as, 0, 99),
-              round = clampInt(p.round, 1, 999);
-            if (hs === null || as === null) {
-              d.errors.match = "Scores must be 0–99.";
+            // Checks for validation errors.
+            this.checkMatchNumbers(d, p);
+            if (d.errors.match !== "") return;
+            const hScore = clampInt(p.payload?.hScore, 0, 99),
+              aScore = clampInt(p.payload?.aScore, 0, 99),
+              round = clampInt(p.payload?.round, 1, 999);
+            if (hScore === null || aScore === null) {
+              d.errors.match = "I punteggi devono essere tra 0 e 99.";
               return;
             }
             if (round === null) {
-              d.errors.match = "Round must be 1–999.";
+              d.errors.match = "La giornata deve essere tra 1 e 999.";
               return;
             }
-            for (var i = 0; i < d.matches.length; i++) {
-              if (d.matches[i].id === p.id) {
-                d.matches[i] = {
-                  id: p.id,
-                  round: round,
-                  home: d.matches[i].home,
-                  away: d.matches[i].away,
-                  hs: hs,
-                  as: as,
-                };
-                break;
-              }
+            const updateId = d.matches.findIndex((m) => m.id === p.payload?.id);
+            if (-1 < updateId) {
+              const mId = d.matches[updateId];
+              mId.round = round;
+              mId.home = { D: { ...mId.home.D }, A: { ...mId.home.A } };
+              mId.away = { D: { ...mId.away.D }, A: { ...mId.away.A } };
+              mId.hScore = hScore;
+              mId.aScore = aScore;
+
+              d.matches.sort(function (a, b) {
+                return a.round - b.round;
+              });
             }
-            d.matches.sort(function (a, b) {
-              return a.round - b.round;
-            });
             d.editingMatch = null;
           },
         };
@@ -906,24 +1262,23 @@
         return {
           /** The single entry point — accept a proposal or reject it */
           present: function (proposal) {
-            var fn = acceptors[proposal.type];
-            if (fn) fn(dataset, proposal);
+            const fn = acceptors[proposal.type].bind(acceptors);
+            if (typeof fn === "function") fn(dataset, proposal);
             State.render(Model.snapshot());
           },
           /** Immutable snapshot for State to derive views from */
           snapshot: function () {
             return {
-              players: dataset.players.slice(),
-              matches: dataset.matches.map(function (m) {
-                return {
-                  id: m.id,
-                  round: m.round,
-                  home: m.home,
-                  away: m.away,
-                  hs: m.hs,
-                  as: m.as,
-                };
-              }),
+              players: dataset.players.map((p) => ({ ...p })),
+              matches: dataset.matches.map((m) => ({
+                id: m.id,
+                round: m.round,
+                home: { D: { ...m.home.D }, A: { ...m.home.A } },
+                away: { D: { ...m.away.D }, A: { ...m.away.A } },
+                hScore: m.hScore,
+                aScore: m.aScore,
+              })),
+              selectedPlayers: new Map(dataset.selectedPlayers),
               editingMatch: dataset.editingMatch,
               errors: {
                 player: dataset.errors.player,
@@ -935,242 +1290,316 @@
       })();
 
       /* ═══════════════════════════════════════════════════════
-       ACTIONS — pure proposal factories
-       ═══════════════════════════════════════════════════════ */
-      var Actions = {
-        addPlayer: function (name) {
-          Model.present({ type: "addPlayer", name: name });
+         ACTIONS — pure proposal factories
+         ═══════════════════════════════════════════════════════ */
+      const Actions = {
+        /**
+         * @param {Player} player
+         */
+        addPlayer: function (player) {
+          Model.present({ type: "addPlayer", payload: { ...player } });
         },
-        removePlayer: function (name) {
-          Model.present({ type: "removePlayer", name: name });
+        removePlayer: function (pId) {
+          Model.present({ type: "removePlayer", payload: pId });
         },
-        addMatch: function (h, a, hs, as, r) {
+        selectPlayer: function (selectId, pId) {
           Model.present({
-            type: "addMatch",
-            home: h,
-            away: a,
-            hs: hs,
-            as: as,
-            round: r,
+            type: "selectPlayer",
+            payload: {
+              node: selectId,
+              id: pId,
+            },
           });
         },
-        removeMatch: function (id) {
-          Model.present({ type: "removeMatch", id: id });
+        addMatch: function ({
+          home,
+          away,
+          hScoreD,
+          hScoreA,
+          aScoreD,
+          aScoreA,
+          round,
+        }) {
+          Model.present({
+            type: "addMatch",
+            payload: {
+              home,
+              away,
+              hScoreD,
+              hScoreA,
+              aScoreD,
+              aScoreA,
+              round,
+            },
+          });
         },
-        startEditMatch: function (id) {
-          Model.present({ type: "startEditMatch", id: id });
+        removeMatch: function (mId) {
+          Model.present({ type: "removeMatch", payload: mId });
+        },
+        startEditMatch: function (mId) {
+          Model.present({ type: "startEditMatch", payload: mId });
         },
         cancelEditMatch: function () {
           Model.present({ type: "cancelEditMatch" });
         },
-        updateMatch: function (id, hs, as, round) {
+        updateMatch: function ({ id: mId, hScore, aScore, round }) {
           Model.present({
             type: "updateMatch",
-            id: id,
-            hs: hs,
-            as: as,
-            round: round,
+            payload: {
+              id: mId,
+              hScore,
+              aScore,
+              round,
+            },
           });
         },
       };
 
       /* ═══════════════════════════════════════════════════════
-       STATE — derives view representation, renders to DOM
-       ═══════════════════════════════════════════════════════ */
-      var State = (function () {
+         STATE — derives view representation, renders to DOM
+         ═══════════════════════════════════════════════════════ */
+      const State = (function () {
         /* ── Derive standings (pure) ───────────────────── */
         function deriveStandings(players, matches) {
-          var map = {};
-          for (var i = 0; i < players.length; i++) {
-            map[players[i]] = {
-              name: players[i],
+          const standing = new Map();
+          for (const player of players) {
+            standing.set(player.id, {
+              player,
               played: 0,
               wins: 0,
-              draws: 0,
               losses: 0,
-              gf: 0,
-              ga: 0,
+              scored: 0,
+              conceded: 0,
               pts: 0,
-            };
+            });
           }
-          for (var j = 0; j < matches.length; j++) {
-            var m = matches[j],
-              h = map[m.home],
-              a = map[m.away];
-            if (!h || !a) continue;
-            h.played++;
-            a.played++;
-            h.gf += m.hs;
-            h.ga += m.as;
-            a.gf += m.as;
-            a.ga += m.hs;
-            if (m.hs > m.as) {
-              h.wins++;
-              a.losses++;
-              h.pts += 3;
-            } else if (m.hs < m.as) {
-              a.wins++;
-              h.losses++;
-              a.pts += 3;
-            } else {
-              h.draws++;
-              a.draws++;
-              h.pts++;
-              a.pts++;
+          for (const m of matches) {
+            const hD = standing.get(m.home?.D?.id),
+              hA = standing.get(m.home?.A?.id);
+            const aD = standing.get(m.away?.D?.id),
+              aA = standing.get(m.away?.A?.id);
+            if (hD == null || hA == null || aD == null || aA == null) {
+              continue;
+            }
+            hD.played += 1;
+            hA.played += 1;
+            aD.played += 1;
+            aA.played += 1;
+            // Scored goals
+            hD.scored += m.home?.D?.score;
+            hA.scored += m.home?.A?.score;
+            aD.scored += m.away?.D?.score;
+            aA.scored += m.away?.A?.score;
+            // Conceded goals
+            hD.conceded = m.aScore;
+            hA.conceded = m.aScore;
+            aD.conceded = m.hScore;
+            aA.conceded = m.hScore;
+            if (m.aScore < m.hScore && 7 < m.hScore) {
+              // Winners
+              hD.wins += 1;
+              hA.wins += 1;
+              // Loosers
+              aD.losses += 1;
+              aA.losses += 1;
+              // Adds points to the winners.
+              // 3 points for a full victory (2 score away without tiebreak) and
+              // 1 point for a narrow victory achieved in a tiebreak.
+              if (m.hScore === 8 && m.aScore + 1 < m.hScore) {
+                hD.pts += 2;
+                hA.pts += 2;
+              }
+              hD.pts += 1;
+              hA.pts += 1;
+            } else if (m.hScore < m.aScore && 7 < m.aScore) {
+              // Winners
+              aD.wins += 1;
+              aA.wins += 1;
+              // Loosers
+              hD.losses += 1;
+              hA.losses += 1;
+              // Adds points to the winners.
+              // 3 points for a full victory (hScore + 1 < aScore) and
+              // 1 point for a narrow victory achieved in a tiebreak.
+              if (m.aScore === 8 && m.hScore + 1 < m.aScore) {
+                aD.pts += 2;
+                aA.pts += 2;
+              }
+              aD.pts += 1;
+              aA.pts += 1;
             }
           }
-          return Object.keys(map)
-            .map(function (k) {
-              return map[k];
-            })
-            .sort(function (a, b) {
-              if (b.pts !== a.pts) return b.pts - a.pts;
-              var gda = a.gf - a.ga,
-                gdb = b.gf - b.ga;
-              if (gdb !== gda) return gdb - gda;
-              return b.gf - a.gf;
-            });
+          return [...standing.values()].sort(function (a, b) {
+            if (b.pts !== a.pts) return b.pts - a.pts;
+            const gda = a.scored - a.conceded;
+            const gdb = b.scored - b.conceded;
+            if (gdb !== gda) return gdb - gda;
+            return b.scored - a.scored;
+          });
         }
 
-        function deriveForm(name, matches) {
-          var form = [];
-          for (var i = matches.length - 1; i >= 0 && form.length < 3; i--) {
-            var m = matches[i];
-            if (m.home === name)
-              form.push(m.hs > m.as ? "W" : m.hs < m.as ? "L" : "D");
-            else if (m.away === name)
-              form.push(m.as > m.hs ? "W" : m.as < m.hs ? "L" : "D");
+        function deriveForm(pId, matches) {
+          const form = [];
+          for (let i = matches.length - 1; i >= 0 && form.length < 3; i--) {
+            const m = matches[i];
+            const inHome = pId === m.home.D.id || pId === m.home.A.id;
+            const inAway = pId === m.away.D.id || pId === m.away.A.id;
+            if (!inHome && !inAway) continue;
+            const homeWon = m.hScore > m.aScore;
+            form.push((inHome && homeWon) || (inAway && !homeWon) ? "W" : "L");
           }
           return form;
         }
 
         /* ── Safe DOM clear ────────────────────────────── */
         function clear(id) {
-          var node = document.getElementById(id);
-          while (node.firstChild) node.removeChild(node.firstChild);
+          const node = document.getElementById(id);
+          node.replaceChildren();
           return node;
         }
 
         /* ── Render sub-sections ───────────────────────── */
         function renderSummary(standings, matches) {
-          var c = clear("summary-stats");
-          var totalGoals = 0;
-          for (var i = 0; i < matches.length; i++)
-            totalGoals += matches[i].hs + matches[i].as;
-          var avg =
-            matches.length > 0 ? (totalGoals / matches.length).toFixed(1) : "0";
-          var leader = standings.length > 0 ? standings[0] : null;
-          var items = [
-            { v: String(standings.length), l: "Players" },
-            { v: String(matches.length), l: "Matches" },
-            { v: String(totalGoals), l: "Total Goals" },
-            { v: avg, l: "Avg / Match" },
-            { v: leader ? leader.name : "–", l: "Leader" },
-            { v: leader ? leader.pts + " pts" : "–", l: "Top Score" },
+          const c = clear("summary-stats");
+          const mLen = matches.length;
+          const sLen = standings.length;
+          // Computes total goals.
+          let totalGoals = 0;
+          for (const m of matches) {
+            totalGoals += m.hScore;
+            totalGoals += m.aScore;
+          }
+          const avg = mLen > 0 ? (totalGoals / mLen).toFixed(1) : "0";
+          const leader = standings[0];
+          const items = [
+            { v: String(sLen), l: "Giocatori" },
+            { v: String(mLen), l: "Partite" },
+            { v: String(totalGoals), l: "Goal Totali" },
+            { v: avg, l: "Media / Partite" },
+            {
+              v: leader
+                ? `${leader.player.name} ${leader.player.surname.slice(0, 1)}.`
+                : "–",
+              l: "In Testa",
+            },
+            { v: leader ? leader.pts + " pts" : "-", l: "Punteggio Max" },
           ];
-          for (var j = 0; j < items.length; j++) {
+          items.forEach((item) =>
             c.appendChild(
               el("div", { className: "stat-box" }, [
-                el("div", { className: "val", textContent: items[j].v }),
-                el("div", { className: "lbl", textContent: items[j].l }),
+                el("div", { className: "val", textContent: item.v }),
+                el("div", { className: "lbl", textContent: item.l }),
               ]),
-            );
-          }
+            ),
+          );
         }
 
         function renderTopScorers(standings) {
-          var c = clear("top-scorers-chart");
-          var byGoals = standings.slice().sort(function (a, b) {
-            return b.gf - a.gf;
-          });
-          var max = byGoals.length > 0 ? byGoals[0].gf : 1;
-          for (var i = 0; i < Math.min(byGoals.length, 6); i++) {
-            var s = byGoals[i],
-              pct = max > 0 ? Math.round((s.gf / max) * 100) : 0;
-            var fill = el("div", { className: "bar-fill" }, [String(s.gf)]);
-            fill.style.width = Math.max(pct, 10) + "%";
+          const c = clear("top-scorers-chart");
+          const sLen = standings.length;
+          if (sLen === 0) {
+            c.appendChild(
+              el("p", { className: "empty-msg", textContent: "Nessun dato" }),
+            );
+            return;
+          }
+          const byGoals = standings.toSorted((a, b) => b.scored - a.scored);
+          const gLen = byGoals.length;
+          const max = gLen > 0 ? byGoals[0].scored : 1;
+          byGoals.slice(0, 6).forEach((s) => {
+            const pct = max > 0 ? Math.round((s.scored / max) * 100) : 0;
+            const fill = el("div", { className: "bar-fill" }, [
+              String(s.scored),
+            ]);
+            fill.style.width = `${Math.max(pct, 10)}%`;
             c.appendChild(
               el("div", { className: "bar-row" }, [
-                el("span", { className: "name", textContent: s.name }),
+                el("span", {
+                  className: "name",
+                  textContent: `${s.player.name} ${s.player.surname.slice(0, 1)}.`,
+                }),
                 el("div", { className: "bar-track" }, [fill]),
               ]),
             );
-          }
-          if (standings.length === 0)
-            c.appendChild(
-              el("p", { className: "empty-msg", textContent: "No data yet." }),
-            );
+          });
         }
 
         function renderRecentResults(matches) {
-          var c = clear("recent-results");
-          var last = matches.slice(-4);
-          for (var i = last.length - 1; i >= 0; i--)
-            c.appendChild(matchCard(last[i]));
-          if (matches.length === 0)
+          const c = clear("recent-results");
+          if (matches.length === 0) {
+            c.appendChild(
+              el("p", {
+                className: "empty-msg",
+                textContent: "Nessuna partita.",
+              }),
+            );
+          }
+          matches.slice(-4).forEach((m) => c.appendChild(matchCard(m)));
+        }
+
+        function matchCard(m) {
+          const hw = m.hScore > m.aScore;
+          const aw = m.aScore > m.hScore;
+          return el("div", { className: "match" }, [
+            el("span", {
+              className: `team ${hw ? "winner" : ""}`,
+              textContent: `${m.home.D.name} ${m.home.D.surname.slice(0, 1)}., ${m.home.A.name} ${m.home.A.surname.slice(0, 1)}.`,
+            }),
+            el("span", {
+              className: "score",
+              textContent: `${m.hScore} - ${m.aScore}`,
+            }),
+            el("span", {
+              className: `team ${aw ? "winner" : ""}`,
+              textContent: `${m.away.D.name} ${m.away.D.surname.slice(0, 1)}., ${m.away.A.name} ${m.away.A.surname.slice(0, 1)}.`,
+            }),
+          ]);
+        }
+
+        function renderStandings(standings) {
+          const tb = clear("standings-body");
+          standings.forEach((s, i) => {
+            const gd = s.scored - s.conceded;
+            const rc = i < 3 ? `rank-${i + 1}` : "";
+            tb.appendChild(
+              el("tr", null, [
+                el("td", { className: rc, textContent: String(i + 1) }),
+                el("td", {
+                  className: rc,
+                  textContent: `${s.player.name} ${s.player.surname.slice(0, 1)}.`,
+                }),
+                el("td", { textContent: String(s.played) }),
+                el("td", { textContent: String(s.wins) }),
+                el("td", { textContent: String(s.losses) }),
+                el("td", { textContent: String(s.scored) }),
+                el("td", { textContent: String(s.conceded) }),
+                el("td", { textContent: `${gd >= 0 ? "+" : ""}${gd}` }),
+                el("td", { textContent: String(s.pts) }),
+              ]),
+            );
+          });
+        }
+
+        function renderAllMatches(snap) {
+          const c = clear("all-matches");
+          const matches = snap.matches;
+          if (matches.length === 0) {
             c.appendChild(
               el("p", {
                 className: "empty-msg",
                 textContent: "No matches yet.",
               }),
             );
-        }
-
-        function matchCard(m) {
-          var hw = m.hs > m.as,
-            aw = m.as > m.hs;
-          return el("div", { className: "match" }, [
-            el("span", {
-              className: "team" + (hw ? " winner" : ""),
-              textContent: m.home,
-            }),
-            el("span", {
-              className: "score",
-              textContent: m.hs + " – " + m.as,
-            }),
-            el("span", {
-              className: "team" + (aw ? " winner" : ""),
-              textContent: m.away,
-            }),
-          ]);
-        }
-
-        function renderStandings(standings) {
-          var tb = clear("standings-body");
-          for (var i = 0; i < standings.length; i++) {
-            var s = standings[i],
-              gd = s.gf - s.ga,
-              rc = i < 3 ? "rank-" + (i + 1) : "";
-            tb.appendChild(
-              el("tr", null, [
-                el("td", { className: rc, textContent: String(i + 1) }),
-                el("td", { className: rc, textContent: s.name }),
-                el("td", { textContent: String(s.played) }),
-                el("td", { textContent: String(s.wins) }),
-                el("td", { textContent: String(s.draws) }),
-                el("td", { textContent: String(s.losses) }),
-                el("td", { textContent: String(s.gf) }),
-                el("td", { textContent: String(s.ga) }),
-                el("td", { textContent: (gd >= 0 ? "+" : "") + gd }),
-                el("td", { textContent: String(s.pts) }),
-              ]),
-            );
           }
-        }
-
-        function renderAllMatches(snap) {
-          var c = clear("all-matches");
-          var matches = snap.matches,
-            editing = snap.editingMatch;
-          var curRound = 0;
-          for (var i = 0; i < matches.length; i++) {
-            var m = matches[i];
+          const editing = snap.editingMatch;
+          let curRound = 0;
+          matches.forEach((m) => {
             if (m.round !== curRound) {
               curRound = m.round;
               c.appendChild(
                 el("div", {
                   className: "round-label",
-                  textContent: "Round " + curRound,
+                  textContent: `Partita ${curRound}`,
                 }),
               );
             }
@@ -1179,73 +1608,66 @@
             } else {
               c.appendChild(matchCardWithActions(m));
             }
-          }
-          if (matches.length === 0)
-            c.appendChild(
-              el("p", {
-                className: "empty-msg",
-                textContent: "No matches yet.",
-              }),
-            );
+          });
         }
 
         function matchCardWithActions(m) {
-          var hw = m.hs > m.as,
-            aw = m.as > m.hs;
-          var row = el("div", { className: "match" }, [
+          const hw = m.hScore > m.aScore;
+          const aw = m.aScore > m.hScore;
+          const row = el("div", { className: "match" }, [
             el("span", {
-              className: "team" + (hw ? " winner" : ""),
-              textContent: m.home,
+              className: `team ${hw ? "winner" : ""}`,
+              textContent: `${m.home.D.name} ${m.home.D.surname.slice(0, 1)}., ${m.home.A.name} ${m.home.A.surname.slice(0, 1)}.`,
             }),
             el("span", {
               className: "score",
-              textContent: m.hs + " – " + m.as,
+              textContent: `${m.hScore} - ${m.aScore}`,
             }),
             el("span", {
-              className: "team" + (aw ? " winner" : ""),
-              textContent: m.away,
+              className: `team ${aw ? "winner" : ""}`,
+              textContent: `${m.away.D.name} ${m.away.D.surname.slice(0, 1)}., ${m.away.A.name} ${m.away.A.surname.slice(0, 1)}.`,
             }),
           ]);
-          var btnEdit = el("button", {
+          const btnEdit = el("button", {
             className: "btn-edit",
-            textContent: "Edit",
+            textContent: "Modifica",
           });
-          var btnDel = el("button", {
-            className: "btn-danger",
-            textContent: "Delete",
-          });
-          btnEdit.addEventListener("click", function () {
+          btnEdit.addEventListener("click", () => {
             Actions.startEditMatch(m.id);
           });
-          btnDel.addEventListener("click", function () {
+          const btnDel = el("button", {
+            className: "btn-danger",
+            textContent: "Rimuovi",
+          });
+          btnDel.addEventListener("click", () => {
             Actions.removeMatch(m.id);
           });
-          var acts = el("div", { className: "actions-cell" }, [
+          const acts = el("div", { className: "actions-cell" }, [
             btnEdit,
             btnDel,
           ]);
           acts.style.cssText =
             "display:flex;gap:.3rem;justify-content:center;margin-top:-.2rem;margin-bottom:.3rem;";
-          var wrapper = el("div", null, [row, acts]);
+          const wrapper = el("div", null, [row, acts]);
           return wrapper;
         }
 
         function editMatchRow(m) {
-          var inHs = el("input", {
+          const inHs = el("input", {
             type: "number",
             min: "0",
             max: "99",
-            value: String(m.hs),
+            value: String(m.hScore),
           });
           inHs.style.width = "50px";
-          var inAs = el("input", {
+          const inAs = el("input", {
             type: "number",
             min: "0",
             max: "99",
-            value: String(m.as),
+            value: String(m.aScore),
           });
           inAs.style.width = "50px";
-          var inRd = el("input", {
+          const inRd = el("input", {
             type: "number",
             min: "1",
             max: "999",
@@ -1254,106 +1676,141 @@
           inRd.style.width = "55px";
 
           /* Style inputs to match theme */
-          [inHs, inAs, inRd].forEach(function (inp) {
+          [inHs, inAs, inRd].forEach((inp) => {
             inp.style.cssText +=
               "background:var(--surface-2);border:1px solid var(--accent);border-radius:4px;color:var(--text);padding:.3rem .4rem;font-size:.85rem;font-family:inherit;outline:none;";
           });
 
-          var btnSave = el("button", {
+          const btnSave = el("button", {
             className: "btn btn-primary",
-            textContent: "Save",
+            textContent: "Salva",
           });
-          var btnCancel = el("button", {
+          btnSave.addEventListener("click", () => {
+            Actions.updateMatch({
+              id: m.id,
+              hScore: inHs.value,
+              aScore: inAs.value,
+              round: inRd.value,
+            });
+          });
+          const btnCancel = el("button", {
             className: "btn btn-cancel",
-            textContent: "Cancel",
+            textContent: "Cancella",
           });
-          btnSave.addEventListener("click", function () {
-            Actions.updateMatch(m.id, inHs.value, inAs.value, inRd.value);
-          });
-          btnCancel.addEventListener("click", function () {
+          btnCancel.addEventListener("click", () => {
             Actions.cancelEditMatch();
           });
 
-          var row = el("div", { className: "match" }, [
-            el("span", { className: "team", textContent: m.home }),
-            el("span", null, [inHs, document.createTextNode(" – "), inAs]),
-            el("span", { className: "team", textContent: m.away }),
+          const row = el("div", { className: "match" }, [
+            el("span", {
+              className: "team",
+              textContent: `${m.home.D.name} ${m.home.D.surname.slice(0, 1)}., ${m.home.A.name} ${m.home.A.surname.slice(0, 1)}.`,
+            }),
+            el("span", null, [inHs, document.createTextNode(" - "), inAs]),
+            el("span", {
+              className: "team",
+              textContent: `${m.away.D.name} ${m.away.D.surname.slice(0, 1)}., ${m.away.A.name} ${m.away.A.surname.slice(0, 1)}.`,
+            }),
           ]);
           row.style.borderColor = "var(--accent)";
-          var controls = el("div", { className: "form-row" }, [
+          const controls = el("div", { className: "form-row" }, [
             el("div", { className: "field" }, [
-              el("label", { textContent: "Round" }),
+              el("label", { textContent: "Partita" }),
               inRd,
             ]),
             el("div", null, [btnSave, document.createTextNode(" "), btnCancel]),
           ]);
-          controls.style.cssText =
-            "margin-top:.3rem;margin-bottom:.5rem;align-items:flex-end;";
           return el("div", null, [row, controls]);
         }
 
-        function renderPlayerSelects(players) {
-          var ids = ["match-home", "match-away"];
-          for (var i = 0; i < ids.length; i++) {
-            var sel = document.getElementById(ids[i]);
-            var val = sel.value;
-            while (sel.firstChild) sel.removeChild(sel.firstChild);
-            sel.appendChild(
-              el("option", { value: "", textContent: "Select…" }),
+        function renderPlayerSelects(players, selectedPlayers) {
+          [
+            "match-home-d",
+            "match-home-a",
+            "match-away-d",
+            "match-away-a",
+          ].forEach((m) => {
+            const sel = document.getElementById(m);
+            const val = sel.value;
+            // "D" or "A"
+            const role = m.split("-").at(-1)?.toUpperCase();
+            clear(m);
+            sel?.appendChild(
+              el("option", { value: "", textContent: "Seleziona…" }),
             );
-            for (var j = 0; j < players.length; j++) {
-              var opt = el("option", {
-                value: players[j],
-                textContent: players[j],
+            players.forEach((p) => {
+              // Each select focuses on a single role.
+              if (role !== p.role) {
+                // Skip.
+                return;
+              }
+              let selId = null;
+              for (const [k, v] of selectedPlayers) {
+                if (v === p.id) {
+                  selId = k;
+                  break;
+                }
+              }
+              // If a player was already selected, skips it.
+              if (selId !== null && selId !== m) {
+                return;
+              }
+              const selOption = `${p.name} ${p.surname}`;
+              const opt = el("option", {
+                value: p.id,
+                textContent: selOption,
               });
-              if (players[j] === val) opt.selected = true;
-              sel.appendChild(opt);
-            }
-          }
+              if (p.id === val) {
+                opt.selected = true;
+              }
+              sel?.appendChild(opt);
+            });
+          });
         }
 
         function renderPlayerStats(standings, matches) {
-          var tb = clear("player-stats-body");
-          for (var i = 0; i < standings.length; i++) {
-            var s = standings[i];
-            var winPct =
-              s.played > 0 ? Math.round((s.wins / s.played) * 100) + "%" : "–";
-            var form = deriveForm(s.name, matches);
-            var formCell = el("td");
-            for (var f = 0; f < form.length; f++) {
-              var cls =
-                form[f] === "W"
-                  ? "badge badge-w"
-                  : form[f] === "L"
-                    ? "badge badge-l"
-                    : "badge badge-d";
+          const tb = clear("player-stats-body");
+          standings.forEach((s) => {
+            const winPct =
+              s.played > 0 ? `${Math.round((s.wins / s.played) * 100)}%` : "–";
+            const form = deriveForm(s.player.id, matches);
+            const formLen = form.length;
+            const formCell = el("td");
+            form.forEach((f, i) => {
+              const cls = f === "W" ? "badge badge-w" : "badge badge-l";
               formCell.appendChild(
-                el("span", { className: cls, textContent: form[f] }),
+                el("span", { className: cls, textContent: f }),
               );
-              if (f < form.length - 1)
-                formCell.appendChild(document.createTextNode(" "));
-            }
-            var btnDel = el("button", {
-              className: "btn-danger",
-              textContent: "Remove",
+              // Skips the last space.
+              if (i === formLen - 1) return;
+              formCell.appendChild(document.createTextNode(" "));
             });
-            (function (name) {
-              btnDel.addEventListener("click", function () {
-                Actions.removePlayer(name);
-              });
-            })(s.name);
+            const btnDel = el("button", {
+              className: "btn-danger",
+              textContent: "Rimuovi",
+            });
+            btnDel.addEventListener("click", () => {
+              Actions.removePlayer(s.player.id);
+            });
+            const acts = el("div", { className: "actions-cell" }, [btnDel]);
+            acts.style.cssText =
+              // "display:flex;gap:.3rem;justify-content:center;margin-top:-.2rem;margin-bottom:.3rem;";
+              "display:flex;gap:.3rem;justify-content:center;";
 
             tb.appendChild(
               el("tr", null, [
-                el("td", { textContent: s.name }),
+                el("td", {
+                  textContent: `${s.player.name}, ${s.player.surname.slice(0, 1)}`,
+                }),
+                el("td", { textContent: s.player.role }),
                 el("td", { textContent: String(s.played) }),
-                el("td", { textContent: String(s.gf) }),
+                el("td", { textContent: String(s.scored) }),
                 el("td", { textContent: winPct }),
                 formCell,
-                el("td", null, [btnDel]),
+                el("td", null, [acts]),
               ]),
             );
-          }
+          });
         }
 
         function renderErrors(errors) {
@@ -1364,82 +1821,116 @@
         /* ── Main State.render — the SAM "State representation" */
         return {
           render: function (snap) {
-            var standings = deriveStandings(snap.players, snap.matches);
+            /* ── NAP (next-action predicate) ─────────── */
+            const napFn = this.nap.run;
+            if (typeof napFn === "function") {
+              napFn(snap);
+            }
+            if (this.nap.skipRender) return;
+            const standings = deriveStandings(snap.players, snap.matches);
             renderSummary(standings, snap.matches);
             renderTopScorers(standings);
             renderRecentResults(snap.matches);
             renderStandings(standings);
             renderAllMatches(snap);
-            renderPlayerSelects(snap.players);
+            renderPlayerSelects(snap.players, snap.selectedPlayers);
             renderPlayerStats(standings, snap.matches);
             renderErrors(snap.errors);
-
-            /* ── NAP (next-action predicate) ─────────── */
-            /* Currently no automatic actions needed,
-             but this is where you'd trigger them, e.g.:
-             if (standings.length > 0 && allMatchesPlayed)
-               Actions.advanceToPlayoffs();              */
+          },
+          nap: {
+            skipRender: false,
+            run: null,
           },
         };
       })();
 
       /* ═══════════════════════════════════════════════════════
-       VIEW WIRING — DOM events → Actions (never touch Model)
-       ═══════════════════════════════════════════════════════ */
+         VIEW WIRING — DOM events → Actions (never touch Model)
+         ═══════════════════════════════════════════════════════ */
       (function initView() {
         /* Add Player */
         document
           .getElementById("btn-add-player")
-          .addEventListener("click", function () {
-            var inp = document.getElementById("player-name");
-            Actions.addPlayer(inp.value);
-            inp.value = "";
-          });
-        document
-          .getElementById("player-name")
-          .addEventListener("keydown", function (e) {
-            if (e.key === "Enter")
-              document.getElementById("btn-add-player").click();
+          .addEventListener("click", () => {
+            const playerData = {
+              name: document.getElementById("player-name").value,
+              surname: document.getElementById("player-surname").value,
+              role: document.getElementById("player-role").value,
+            };
+            Actions.addPlayer(playerData);
+            document.getElementById("player-name").value = "";
+            document.getElementById("player-surname").value = "";
+            document.getElementById("player-role").selectedIndex = 0;
           });
 
         /* Add Match */
         document
           .getElementById("btn-add-match")
-          .addEventListener("click", function () {
-            Actions.addMatch(
-              document.getElementById("match-home").value,
-              document.getElementById("match-away").value,
-              document.getElementById("match-home-score").value,
-              document.getElementById("match-away-score").value,
-              document.getElementById("match-round").value,
-            );
-            document.getElementById("match-home-score").value = "";
-            document.getElementById("match-away-score").value = "";
-            document.getElementById("match-round").value = "";
+          .addEventListener("click", () => {
+            const home = {
+              D: document.getElementById("match-home-d").value,
+              A: document.getElementById("match-home-a").value,
+            };
+            const away = {
+              D: document.getElementById("match-away-d").value,
+              A: document.getElementById("match-away-a").value,
+            };
+            Actions.addMatch({
+              home,
+              away,
+              hScoreD: parseInt(
+                document.getElementById("match-home-score-d").value,
+              ),
+              hScoreA: parseInt(
+                document.getElementById("match-home-score-a").value,
+              ),
+              aScoreD: parseInt(
+                document.getElementById("match-away-score-d").value,
+              ),
+              aScoreA: parseInt(
+                document.getElementById("match-away-score-a").value,
+              ),
+              round: document.getElementById("match-round").value,
+            });
           });
 
+        [
+          "match-home-d",
+          "match-home-a",
+          "match-away-d",
+          "match-away-a",
+        ].forEach((m) => {
+          const sel = document.getElementById(m);
+          sel
+            // Tracks selected players.
+            ?.addEventListener("change", (event) => {
+              Actions.selectPlayer(m, event.target.value);
+            });
+        });
+
         /* Tabs */
-        var btns = document.querySelectorAll("[role=tab]");
-        var panels = document.querySelectorAll("[role=tabpanel]");
+        const btns = document.querySelectorAll("[role=tab]");
+        const panels = document.querySelectorAll("[role=tabpanel]");
         function activate(btn) {
-          for (var i = 0; i < btns.length; i++) {
-            btns[i].setAttribute("aria-selected", "false");
-            btns[i].setAttribute("tabindex", "-1");
-          }
-          for (var j = 0; j < panels.length; j++)
-            panels[j].classList.remove("active");
+          btns.forEach((b) => {
+            b.setAttribute("aria-selected", "false");
+            b.setAttribute("tabindex", "-1");
+          });
+          panels.forEach((p) => {
+            p.classList.remove("active");
+          });
           btn.setAttribute("aria-selected", "true");
           btn.removeAttribute("tabindex");
-          var t = document.getElementById(btn.getAttribute("aria-controls"));
+          const t = document.getElementById(btn.getAttribute("aria-controls"));
           if (t) t.classList.add("active");
         }
-        for (var k = 0; k < btns.length; k++) {
-          btns[k].addEventListener("click", function (e) {
+        btns.forEach((b) => {
+          b.addEventListener("click", (e) => {
             activate(e.currentTarget);
           });
-          btns[k].addEventListener("keydown", function (e) {
-            var idx = Array.prototype.indexOf.call(btns, e.currentTarget),
-              next = -1;
+          b.addEventListener("keydown", (e) => {
+            const idx = Array.prototype.indexOf.call(btns, e.currentTarget);
+            let next = -1;
             if (e.key === "ArrowRight" || e.key === "ArrowDown")
               next = (idx + 1) % btns.length;
             if (e.key === "ArrowLeft" || e.key === "ArrowUp")
@@ -1450,7 +1941,7 @@
               activate(btns[next]);
             }
           });
-        }
+        });
 
         /* Initial render */
         State.render(Model.snapshot());
